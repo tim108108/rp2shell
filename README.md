@@ -16,7 +16,7 @@ Use the development board as [RP2040-Zero](https://www.waveshare.net/wiki/RP2040
 ## Let's start !!  
 如果pico-sdk沒有submodule update，某些模組(tinyusb)沒安裝，會導致PC偵測不到rp2040  
 ```bash
-git clone https://github.com/tim108108/rp2cli.git
+git clone https://github.com/tim108108/rp2shell.git
 git submodule update --init 
 cd pico-sdk
 git submodule update --init
