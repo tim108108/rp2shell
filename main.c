@@ -7,11 +7,11 @@
 int main()
 {
     stdio_init_all();
+    int i = 0;
     while(1){
         printf("hi\n");
+        printf("%d\n",i);
+        i++;
         sleep_ms(100);
     }
-    // xTaskCreate(RGB_task,"rgb_task",256,NULL,1,NULL);
-    // vTaskStartScheduler();
-    // printf("hello");
 }
