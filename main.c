@@ -12,6 +12,6 @@ int main()
         printf("hi\n");
         printf("%d\n",i);
         i++;
-        sleep_ms(100);
+        sleep_ms(1000);
     }
 }
