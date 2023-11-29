@@ -10,10 +10,13 @@ Use the development board as [RP2040-Zero](https://www.waveshare.net/wiki/RP2040
 ## CLI refer
 1. https://github.com/Nrusher/nr_micro_shell
 2. https://github.com/lurk101/pshell
-3. 
-4. https://github.com/RC2014Z80/picoterm 
-5. https://github.com/JingoC/terminal
-6. https://github.com/maxpoliak/ile-cli
+3. https://gitee.com/somebug/atomlib
+4. https://github.com/fapplin/rp2040-pico-command-line-interpreter
+5. https://github.com/mattwach/pico_uart_console
+6. 
+7. https://github.com/RC2014Z80/picoterm 
+8. https://github.com/JingoC/terminal
+9. https://github.com/maxpoliak/ile-cli
 
 ## Let's start !!  
 如果pico-sdk沒有submodule update，某些模組(tinyusb)沒安裝，會導致PC偵測不到rp2040  
@@ -35,3 +38,21 @@ cmake ..
 rp2shell/build/make -j
 ```
 接著把build目錄下的`rp2040_project.uf2`燒錄到rp2040
+
+## Code struct
+```mermaid
+classDiagram
+    pt_console --> shell_function: (argc, argv)
+    class pt_console{
+        buffer: *char
+        count: char
+        +console_reset()
+        +console_getchar()
+    }
+    class shell_function{
+        argc: char
+        argv: *char
+        +ls()
+        +cd()
+    }
+```
