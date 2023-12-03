@@ -9,14 +9,16 @@
 Use the development board as [RP2040-Zero](https://www.waveshare.net/wiki/RP2040-Zero).  
 ## CLI refer
 1. https://github.com/Nrusher/nr_micro_shell
-2. https://github.com/lurk101/pshell
-3. https://gitee.com/somebug/atomlib
-4. https://github.com/fapplin/rp2040-pico-command-line-interpreter
-5. https://github.com/mattwach/pico_uart_console
-6. 
-7. https://github.com/RC2014Z80/picoterm 
-8. https://github.com/JingoC/terminal
-9. https://github.com/maxpoliak/ile-cli
+2. https://github.com/davidgiven/FUZIX
+3. https://github.com/lurk101/pshell
+4. https://gitee.com/somebug/atomlib
+5. https://github.com/fapplin/rp2040-pico-command-line-interpreter
+6. https://github.com/mattwach/pico_uart_console
+7. 
+8. https://github.com/RC2014Z80/picoterm 
+9. https://github.com/JingoC/terminal
+10. https://github.com/maxpoliak/ile-cli
+11. https://www.gnu.org/prep/standards/standards.html#Command_002dLine-Interfaces
 
 ## Let's start !!  
 如果pico-sdk沒有submodule update，某些模組(tinyusb)沒安裝，會導致PC偵測不到rp2040  
@@ -48,6 +50,7 @@ classDiagram
         count: char
         +console_reset()
         +console_getchar()
+        +console_getopt()
     }
     class shell_function{
         argc: char
