@@ -44,19 +44,19 @@ void console_getchar(struct pt_console *console){
 }
 void console_getopt(struct pt_console *console){
     int i;
+
+    console->argv[0] = &(console->buffer[0]);
     for (i = 0; i < console->count; i++){
         if (console->buffer[i] == ' ') {
+            console->buffer[i] = '\0';
+            console->argv[console->argc + 1] = &(console->buffer[i + 1]);
             console->argc += 1;
-        } else {
-            console->argv[console->argc] = &(console->buffer[i]);
-        }
-        // printf("\n%c",console->buffer[i]);
+        } 
         // printf("\n%s",(console->argv[console->argc]));
     }
     console->argc += 1;
-    printf("\nargc:%d",(int)(console->argc));
     for (i = 0; i < console->argc; i++){
-        printf("%s\n", (console->argv[i]));
+        printf("\nargc%d:%s\n", i,(console->argv[i]));
     }
 }
 void ls(char argc, char **argv){
