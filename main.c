@@ -44,7 +44,10 @@ void console_getchar(struct pt_console *console){
 }
 void console_getopt(struct pt_console *console){
     int i;
-
+    if (console->buffer[0] == '\0'){
+        console->argc = 0;
+        return;
+    }
     console->argv[0] = &(console->buffer[0]);
     for (i = 0; i < console->count; i++){
         if (console->buffer[i] == ' ') {
