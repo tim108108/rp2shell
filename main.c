@@ -55,17 +55,28 @@ void console_getopt(struct pt_console *console){
             console->argv[console->argc + 1] = &(console->buffer[i + 1]);
             console->argc += 1;
         } 
-        // printf("\n%s",(console->argv[console->argc]));
     }
     console->argc += 1;
-    for (i = 0; i < console->argc; i++){
-        printf("\nargc%d:%s\n", i,(console->argv[i]));
+}
+/* app */
+void ls(){
+    printf("\napp:ls");
+}
+void cd(){
+    printf("\napp:cd");
+}
+void app_handler(struct pt_console *console){
+    printf("\n============\napp handler:");
+    int i = 0;
+    if (strcmp(console->argv[0], "ls") == 0){
+        ls();
+    }else if (strcmp(console->argv[0], "cd") == 0){
+        cd();
+    }else {
+        printf("\nnot func");
     }
+    printf("\napp end.\n============");
 }
-void ls(char argc, char **argv){
-    printf("ls\n");
-}
-
 int main()
 {
     stdio_init_all();
@@ -80,10 +91,11 @@ int main()
         console_reset(pconsole);        
         console_getchar(pconsole);
         console_getopt(pconsole);
+        app_handler(pconsole);
         if (!strcmp(pconsole->buffer, "exit")){
             break;
         }
-        printf("\nrepeat:%s",pconsole->buffer);
+        // printf("\nrepeat:%s",pconsole->buffer);
     }
     printf("\nfunction_end");
     return 0;
