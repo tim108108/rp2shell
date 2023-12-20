@@ -7,20 +7,26 @@
 #include "lib/test.h"
 
 #define CON_BUF_MAX_SIZE 256
-struct pt_console{
+
+typedef struct point_console{
     char buffer[CON_BUF_MAX_SIZE];
     char count;
     char argc;
     char *argv[CON_BUF_MAX_SIZE];
-};
+}pt_console;
 
-void console_reset(struct pt_console *console){
+typedef struct console_command_st{
+    char cmd[CON_BUF_MAX_SIZE];
+    void (*fp)(char argc, char **argv);
+}console_cmd_arr;
+
+void console_reset(pt_console *console){
     memset(console->buffer, 0, CON_BUF_MAX_SIZE);
     console->count = 0;
     console->argc = 0;
     printf("\n$~");
 }
-void console_getchar(struct pt_console *console){
+void console_getchar(pt_console *console){
     while(1) {
         int ch = getchar_timeout_us(0); // getchar can't read 'backspace', 'esc', etc special key......
         if (ch != PICO_ERROR_TIMEOUT){
@@ -42,7 +48,7 @@ void console_getchar(struct pt_console *console){
         }
     }
 }
-void console_getopt(struct pt_console *console){
+void console_getopt(pt_console *console){
     int i;
     if (console->buffer[0] == '\0'){
         console->argc = 0;
@@ -58,30 +64,39 @@ void console_getopt(struct pt_console *console){
     }
     console->argc += 1;
 }
-/* app */
-void ls(){
+/* ======== app ======== */
+void ls_app(char argc, char **argv){
     printf("\napp:ls");
 }
-void cd(){
+void cd_app(char argc, char **argv){
     printf("\napp:cd");
 }
-void app_handler(struct pt_console *console){
-    printf("\n============\napp handler:");
+/* ======== OS? ======== */
+console_cmd_arr console_cmd[] = 
+{
+    {"ls", ls_app},
+    {"cd", cd_app},
+    {"\0", NULL}
+};
+
+void app_handler(pt_console *console){
+    
     int i = 0;
-    if (strcmp(console->argv[0], "ls") == 0){
-        ls();
-    }else if (strcmp(console->argv[0], "cd") == 0){
-        cd();
-    }else {
-        printf("\nnot func");
+    while (console_cmd[i].fp != NULL){
+        // printf("\n%s",console_cmd[i].cmd);
+        if (!strcmp(console->argv[0], console_cmd[i].cmd)){
+            console_cmd[i].fp(console->argc, console->argv);
+            return;
+        }
+        i++;
     }
-    printf("\napp end.\n============");
 }
+
 int main()
 {
     stdio_init_all();
 
-    struct pt_console *pconsole = malloc(sizeof(struct pt_console));
+    pt_console *pconsole = malloc(sizeof(pt_console));
     int i;
 
     // sleep_ms(5000);
