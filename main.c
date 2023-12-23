@@ -7,7 +7,7 @@
 #include "lib/test.h"
 
 #define CON_BUF_MAX_SIZE 256
-
+/* ======== api ======== */
 typedef struct point_console{
     char buffer[CON_BUF_MAX_SIZE];
     char count;
@@ -19,6 +19,21 @@ typedef struct console_command_st{
     char cmd[CON_BUF_MAX_SIZE];
     void (*fp)(char argc, char **argv);
 }console_cmd_arr;
+
+/* ======== app ======== */
+void ls_app(char argc, char **argv){
+    printf("\napp:ls");
+}
+void cd_app(char argc, char **argv){
+    printf("\napp:cd");
+}
+/* ======== cmd ======== */
+console_cmd_arr console_cmd[] = 
+{
+    {"ls", ls_app},
+    {"cd", cd_app},
+    {"\0", NULL}
+};
 
 void console_reset(pt_console *console){
     memset(console->buffer, 0, CON_BUF_MAX_SIZE);
@@ -64,22 +79,8 @@ void console_getopt(pt_console *console){
     }
     console->argc += 1;
 }
-/* ======== app ======== */
-void ls_app(char argc, char **argv){
-    printf("\napp:ls");
-}
-void cd_app(char argc, char **argv){
-    printf("\napp:cd");
-}
-/* ======== OS? ======== */
-console_cmd_arr console_cmd[] = 
-{
-    {"ls", ls_app},
-    {"cd", cd_app},
-    {"\0", NULL}
-};
 
-void app_handler(pt_console *console){
+void console_shell(pt_console *console){
     
     int i = 0;
     while (console_cmd[i].fp != NULL){
@@ -106,7 +107,7 @@ int main()
         console_reset(pconsole);        
         console_getchar(pconsole);
         console_getopt(pconsole);
-        app_handler(pconsole);
+        console_shell(pconsole);
         if (!strcmp(pconsole->buffer, "exit")){
             break;
         }

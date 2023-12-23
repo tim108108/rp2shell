@@ -51,6 +51,7 @@ classDiagram
         +console_reset()
         +console_getchar()
         +console_getopt()
+        +console_shell()
     }
     class shell_function{
         argc: char
