@@ -60,3 +60,13 @@ classDiagram
         +cd()
     }
 ```
+```mermaid
+stateDiagram-v2
+    [*] --> shell
+    %% state machine
+    shell --> app
+    shell --> exit
+    shell --> tab
+    tab --> app
+    app --> shell
+```

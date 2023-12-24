@@ -8,23 +8,27 @@
 
 #define CON_BUF_MAX_SIZE 256
 /* ======== api ======== */
-typedef struct point_console{
+typedef struct point_console
+{
     char buffer[CON_BUF_MAX_SIZE];
     char count;
     char argc;
     char *argv[CON_BUF_MAX_SIZE];
 }pt_console;
 
-typedef struct console_command_st{
+typedef struct console_command_st
+{
     char cmd[CON_BUF_MAX_SIZE];
     void (*fp)(char argc, char **argv);
 }console_cmd_arr;
 
 /* ======== app ======== */
-void ls_app(char argc, char **argv){
+void ls_app(char argc, char **argv)
+{
     printf("\napp:ls");
 }
-void cd_app(char argc, char **argv){
+void cd_app(char argc, char **argv)
+{
     printf("\napp:cd");
 }
 /* ======== cmd ======== */
@@ -33,28 +37,30 @@ console_cmd_arr console_cmd[] =
     {"ls", ls_app},
     {"cd", cd_app},
     {"\0", NULL}
-};
+}; 
 
-void console_reset(pt_console *console){
+void console_reset(pt_console *console)
+{
     memset(console->buffer, 0, CON_BUF_MAX_SIZE);
     console->count = 0;
     console->argc = 0;
     printf("\n$~");
 }
-void console_getchar(pt_console *console){
+void console_getchar(pt_console *console)
+{
     while(1) {
         int ch = getchar_timeout_us(0); // getchar can't read 'backspace', 'esc', etc special key......
         if (ch != PICO_ERROR_TIMEOUT){
             if (ch == '\r'){
-                // printf("\ncount:%d",*count);
-                // putchar('\r');
-                // putchar('\n');
                 break;
+                }
+            else if(ch == '\t'){
+                printf("tab");
                 }
             else if(console->count > CON_BUF_MAX_SIZE){
                 printf("out of buffer!!\n");
                 break;
-            }
+                }
             else{
                 putchar(ch);  
                 console->buffer[console->count] = ch;
@@ -63,7 +69,8 @@ void console_getchar(pt_console *console){
         }
     }
 }
-void console_getopt(pt_console *console){
+void console_getopt(pt_console *console)
+{
     int i;
     if (console->buffer[0] == '\0'){
         console->argc = 0;
@@ -80,8 +87,8 @@ void console_getopt(pt_console *console){
     console->argc += 1;
 }
 
-void console_shell(pt_console *console){
-    
+void console_shell(pt_console *console)
+{
     int i = 0;
     while (console_cmd[i].fp != NULL){
         // printf("\n%s",console_cmd[i].cmd);
