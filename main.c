@@ -78,42 +78,31 @@ void console_getchar(pt_console *console)
 }
 void console_tabcomplete(pt_console *console) 
 {
-    // 根據console->buffer去尋找console_cmd[]是否有匹配，並將對應的cmd寫入console->buffer並putchar()，且排除console->buffer
-    int match_index = -1, i;
+    // 根據console->buffer去尋找console_cmd[]是否有匹配，並將對應的cmd寫入console->buffer並printf()
+    int index = 0, i;
     char partial_cmd[CON_BUF_MAX_SIZE];
-    partial_cmd[0] = '\0';
-    
-    for (i = console->count - 1; i >= 0; i--){
-        if (console->buffer[i] == ' '){
-            break;
-        }
-    }
-    strcpy(partial_cmd, console->buffer + i + 1);
 
-    for (int j = 0; console_cmd[j].fp != NULL; ++j){
-        if (strncmp(partial_cmd, console_cmd[j].cmd, strlen(partial_cmd)) == 0){
-            if (match_index == -1){
-                match_index = j;
-            }
-            else{
-                printf("\n%s", console->buffer);
-                for (int k = 0; console_cmd[k].fp != NULL; ++k){
-                    if (strncmp(partial_cmd, console_cmd[k].cmd, strlen(partial_cmd)) == 0){
-                        printf(" %s", console_cmd[k].cmd);
-                    }
-                }
-                printf("\n$~%s", console->buffer);
-                return;
-            }
+    if(console->count < 1){
+        printf("\nCommand List:");
+        while (console_cmd[index].fp != NULL){
+            printf("\n%s", console_cmd[index].cmd);
+            index++;
         }
+        return;
     }
+    memset(partial_cmd, 0, CON_BUF_MAX_SIZE);
+    strcpy(partial_cmd, console->buffer);
 
-    if (match_index != -1)
-    {
-        strcpy(console->buffer + i + 1, console_cmd[match_index].cmd);
-        console->count = strlen(console->buffer);
-        putchar(console->buffer[i + 1]);
+    index = 0;
+    while (console_cmd[index].fp != NULL){
+        if(!strncmp(partial_cmd, console_cmd[index].cmd, strlen(console->buffer))){
+            printf("%s",console_cmd[index].cmd+console->count);
+            strcpy(console->buffer, console_cmd[index].cmd);
+            console->count = strlen(console_cmd[index].cmd);
+        }
+        index++;
     }
+    return;
 }
 void console_getopt(pt_console *console)
 {
