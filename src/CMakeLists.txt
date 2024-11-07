@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.13)
 # set(PICO_SDK_PATH ./pico-sdk/)
 
 # Include build functions from Pico SDK
-include(pico-sdk/pico_sdk_init.cmake)
+include(../pico-sdk/pico_sdk_init.cmake)
 
 
 # Set name of project (as PROJECT_NAME) and C/C++ standards
