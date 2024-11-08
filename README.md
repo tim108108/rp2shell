@@ -40,7 +40,7 @@ classDiagram
 ```
 ```mermaid
 stateDiagram-v2
-    [*] --> shell
+    reset --> shell
     %% state machine
     shell --> app
     shell --> exit
