@@ -6,7 +6,7 @@ FROM ubuntu:latest
 WORKDIR /home/ubuntu/rp2shell/src
 
 # 更新 apt 並安裝編譯依賴套件
-RUN apt-get update && apt-get install -y python3 git tar cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential g++ libstdc++-arm-none-eabi-newlib
+RUN apt update && apt install -y python3 git tar cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential g++ libstdc++-arm-none-eabi-newlib
 
 RUN cd .. \
     && git clone https://github.com/raspberrypi/pico-sdk.git \
