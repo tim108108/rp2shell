@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pico/stdlib.h"
+#include "pico/rand.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "lib/test.h"
@@ -53,6 +54,13 @@ void app_prt(char argc, char **argv)
     }
     return;
 }
+void app_rnd(char argc, char **argv)
+{
+    rng_128_t rnd_num;
+    get_rand_128 (&rnd_num);
+    printf("\n0x%llX%llX", (unsigned long long)rnd_num.r[0], (unsigned long long)rnd_num.r[1]);
+    return;
+}
 void app_top(char argc, char **argv)
 {
     printf("\ncount:%d", gconsole.count);
@@ -67,6 +75,7 @@ void app_exit(char argc, char **argv)
     printf("Function End~");
     return;
 }
+
 /* ======== cmd ======== */
 console_cmd_arr console_cmd[] = 
 {
@@ -74,6 +83,7 @@ console_cmd_arr console_cmd[] =
     {"cd", app_cd},
     {"print", app_prt},
     {"top", app_top},
+    {"rnd", app_rnd},
     {"exit", app_exit},
     {"\0", NULL}
 };

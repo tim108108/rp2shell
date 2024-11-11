@@ -28,8 +28,14 @@ add_executable(${PROJECT_NAME}
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME} 
-    lib pico_stdlib hardware_pio hardware_adc hardware_i2c hardware_flash hardware_sync
-    
+    lib 
+    pico_stdlib
+    pico_rand
+    hardware_pio 
+    hardware_adc 
+    hardware_i2c 
+    hardware_flash 
+    hardware_sync
 )
 
 # Enable usb output, disable uart output
