@@ -19,6 +19,18 @@ rp2shell/build/make -j
 ```
 接著把build目錄下的`rp2040_project.uf2`燒錄到rp2040
 
+## Docker
+使用 docker 建立開發環境，並執行
+```bash
+sh env.sh build
+sh env.sh run
+```
+在 docker 編譯
+```bash
+sh run.sh build
+sh run.sh clr
+```
+
 ## Code struct
 ```mermaid
 classDiagram

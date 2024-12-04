@@ -5,6 +5,7 @@
 #include "pico/rand.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
+#include "hardware/flash.h"
 #include "lib/test.h"
 
 #define CON_BUF_MAX_SIZE 256
@@ -33,7 +34,29 @@ void console_shell(pt_console *console);
 pt_console gconsole;
 void app_ls(char argc, char **argv)
 {
-    printf("\napp:ls");
+    printf("\n");
+
+    const uint8_t *flash_target_address = (const uint8_t *)(XIP_BASE);
+    extern uint32_t __flash_binary_end;  // 編譯器提供的符號
+    uint32_t code_end = (uint32_t)&__flash_binary_end;
+    uint32_t flash_size = PICO_FLASH_SIZE_BYTES;
+    uint32_t free_flash_space = flash_size - (code_end - XIP_BASE);
+
+    printf("%u,%u\n",code_end, (code_end - XIP_BASE));
+    printf("Reading code at flash:");
+    for (int i = 0; i < (code_end - XIP_BASE) ; i++) {
+        if (i % 16 == 0) {
+            printf("\n[%05X]: ", i);
+        }
+        printf("%02X ", flash_target_address[i]);
+        
+    }
+    printf("\n\n");
+    
+    printf("Flash total size: %u bytes (%u KB)\n", flash_size, flash_size / 1024);
+    printf("Code end address: 0x%08x\n", code_end);
+    printf("Free flash space: %u bytes (%u KB)\n", free_flash_space, free_flash_space / 1024);
+
     return;
 }
 void app_cd(char argc, char **argv)

@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 # set local pico-sdk path
-# set(PICO_SDK_PATH ./pico-sdk/)
+set(PICO_SDK_PATH ./pico-sdk/)
 
 # Include build functions from Pico SDK
 include(../pico-sdk/pico_sdk_init.cmake)

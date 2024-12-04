@@ -13,4 +13,11 @@ RUN cd .. \
     && cd pico-sdk \
     && git submodule update --init \
     && cd .. \
+    && git clone https://github.com/raspberrypi/picotool.git \
+    && cd picotool \
+    && mkdir build && cd build \
+    && export PICO_SDK_PATH=../../pico-sdk/ \
+    && cmake .. \
+    && make && make install \
+    && cd .. \
     && git config --global safe.directory '*' \
