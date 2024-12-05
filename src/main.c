@@ -32,36 +32,67 @@ void console_getopt(pt_console *console);
 void console_shell(pt_console *console);
 /* ======== app ======== */
 pt_console gconsole;
-void app_ls(char argc, char **argv)
+void app_code(char argc, char **argv)
 {
-    printf("\n");
-
     const uint8_t *flash_target_address = (const uint8_t *)(XIP_BASE);
-    extern uint32_t __flash_binary_end;  // 編譯器提供的符號
+    extern uint32_t __flash_binary_end;
     uint32_t code_end = (uint32_t)&__flash_binary_end;
     uint32_t flash_size = PICO_FLASH_SIZE_BYTES;
     uint32_t free_flash_space = flash_size - (code_end - XIP_BASE);
 
-    printf("%u,%u\n",code_end, (code_end - XIP_BASE));
+    printf("\n");
     printf("Reading code at flash:");
     for (int i = 0; i < (code_end - XIP_BASE) ; i++) {
         if (i % 16 == 0) {
             printf("\n[%05X]: ", i);
         }
         printf("%02X ", flash_target_address[i]);
-        
     }
     printf("\n\n");
-    
     printf("Flash total size: %u bytes (%u KB)\n", flash_size, flash_size / 1024);
     printf("Code end address: 0x%08x\n", code_end);
     printf("Free flash space: %u bytes (%u KB)\n", free_flash_space, free_flash_space / 1024);
 
     return;
 }
-void app_cd(char argc, char **argv)
+void app_file(char argc, char **argv)
 {
-    printf("\napp:cd");
+    extern uint32_t __flash_binary_end; 
+    const uint8_t *flash_target_address = (const uint8_t *)(XIP_BASE);
+    uint32_t code_end = (uint32_t)&__flash_binary_end;
+    uint32_t flash_size = PICO_FLASH_SIZE_BYTES;
+    uint32_t flash_target_offset = 0x40000;
+    
+    printf("\n");
+    if (((uint32_t)&__flash_binary_end - XIP_BASE) > flash_target_offset) {
+        printf("Error: Binary end address exceeds target offset.\n");
+        return;
+    }
+
+    uint8_t random_data[FLASH_PAGE_SIZE];
+    for (uint i = 0; i < FLASH_PAGE_SIZE; ++i){
+        random_data[i] = rand() >> 16;
+    }
+    // printf("\nErasing target region...\n");
+    // flash_range_erase(flash_target_offset, FLASH_SECTOR_SIZE);
+    // printf("\nDone\n");
+    // for (int i = flash_target_offset; i < flash_target_offset + FLASH_PAGE_SIZE; i++) {
+    //     if (i % 16 == 0) {
+    //         printf("\n[%05X]: ", i);
+    //     }
+    //     printf("%02X ", flash_target_address[i]);
+    // }
+    
+    printf("\nProgramming target region...\n");
+    flash_range_program(flash_target_offset, random_data, FLASH_PAGE_SIZE);
+    printf("\nDone\n");
+    for (int i = flash_target_offset; i < flash_target_offset + FLASH_PAGE_SIZE; i++) {
+        if (i % 16 == 0) {
+            printf("\n[%05X]: ", i);
+        }
+        printf("%02X ", flash_target_address[i]);
+    }
+
     return;
 }
 void app_prt(char argc, char **argv)
@@ -102,8 +133,8 @@ void app_exit(char argc, char **argv)
 /* ======== cmd ======== */
 console_cmd_arr console_cmd[] = 
 {
-    {"ls", app_ls},
-    {"cd", app_cd},
+    {"code", app_code},
+    {"file", app_file},
     {"print", app_prt},
     {"top", app_top},
     {"rnd", app_rnd},
