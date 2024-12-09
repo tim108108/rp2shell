@@ -34,7 +34,7 @@ target_link_libraries(${PROJECT_NAME}
     hardware_pio 
     hardware_adc 
     hardware_i2c 
-    hardware_flash 
+    hardware_flash
     hardware_sync
 )
 

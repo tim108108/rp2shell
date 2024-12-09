@@ -6,6 +6,7 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "hardware/flash.h"
+#include "hardware/sync.h"
 #include "lib/test.h"
 
 #define CON_BUF_MAX_SIZE 256
@@ -57,35 +58,47 @@ void app_code(char argc, char **argv)
 }
 void app_file(char argc, char **argv)
 {
+    // FLASH_PAGE_SIZE        256
+    // FLASH_SECTOR_SIZE      4096
     extern uint32_t __flash_binary_end; 
     const uint8_t *flash_target_address = (const uint8_t *)(XIP_BASE);
     uint32_t code_end = (uint32_t)&__flash_binary_end;
     uint32_t flash_size = PICO_FLASH_SIZE_BYTES;
-    uint32_t flash_target_offset = 0x40000;
-    
-    printf("\n");
+    uint32_t flash_target_offset = 0x100000;
+    uint32_t ints; 
+
     if (((uint32_t)&__flash_binary_end - XIP_BASE) > flash_target_offset) {
         printf("Error: Binary end address exceeds target offset.\n");
         return;
     }
 
     uint8_t random_data[FLASH_PAGE_SIZE];
+    printf("\n\nrandom_data...\n");
     for (uint i = 0; i < FLASH_PAGE_SIZE; ++i){
         random_data[i] = rand() >> 16;
+        if (i % 16 == 0) {
+            printf("\n[%05X]: ", i);
+        }
+        printf("%02X ", random_data[i]);
     }
-    // printf("\nErasing target region...\n");
-    // flash_range_erase(flash_target_offset, FLASH_SECTOR_SIZE);
-    // printf("\nDone\n");
-    // for (int i = flash_target_offset; i < flash_target_offset + FLASH_PAGE_SIZE; i++) {
-    //     if (i % 16 == 0) {
-    //         printf("\n[%05X]: ", i);
-    //     }
-    //     printf("%02X ", flash_target_address[i]);
-    // }
+
+    printf("\n\nErasing target region...\n");
+    ints = save_and_disable_interrupts();
+    flash_range_erase(flash_target_offset, FLASH_SECTOR_SIZE);
+    restore_interrupts (ints);
+    printf("Done!!");
+    for (int i = flash_target_offset; i < flash_target_offset + FLASH_PAGE_SIZE; i++) {
+        if (i % 16 == 0) {
+            printf("\n[%05X]: ", i);
+        }
+        printf("%02X ", flash_target_address[i]);
+    }
     
-    printf("\nProgramming target region...\n");
+    printf("\n\nProgramming target region...\n");
+    ints = save_and_disable_interrupts();
     flash_range_program(flash_target_offset, random_data, FLASH_PAGE_SIZE);
-    printf("\nDone\n");
+    restore_interrupts (ints);
+    printf("Done!!");
     for (int i = flash_target_offset; i < flash_target_offset + FLASH_PAGE_SIZE; i++) {
         if (i % 16 == 0) {
             printf("\n[%05X]: ", i);
